@@ -3,36 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live TV Streaming 3.2</title>
+    <title>Live TV Streaming 5.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>📺 Live TV Streaming</h1>
+        <h1>📺 Live TV Streaming 5.0</h1>
 
-        <!-- Login Section -->
-        <div class="login-section" id="loginSection">
+        <!-- User Login & Registration -->
+        <div class="auth-section" id="authSection">
             <input type="text" id="username" placeholder="Enter Username">
             <input type="password" id="password" placeholder="Enter Password">
             <button onclick="login()">Login</button>
+            <button onclick="register()">Register</button>
         </div>
 
-        <!-- Logout Button -->
-        <button class="toggle-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+        <!-- User Profile & Logout -->
+        <div id="userSection" style="display: none;">
+            <p>Welcome, <span id="userDisplayName"></span>! (<span id="userSubscription"></span>)</p>
+            <button class="toggle-btn" id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Live Notifications -->
+        <div id="notifications" class="notification-box"></div>
 
         <!-- Dark Mode Toggle -->
         <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
         <!-- Live TV Player -->
         <h2>🎥 Watch Live</h2>
-        <video id="tvPlayer" controls autoplay>
-            <source id="videoSource" src="https://amartechbd.xyz/toffeebd/?play=match-2" type="video/mp4">
-        </video>
+        <div id="videoContainer">
+            <video id="tvPlayer" controls autoplay>
+                <source id="videoSource" src="https://amartechbd.xyz/toffeebd/?play=match-2" type="video/mp4">
+            </video>
+        </div>
 
-        <!-- Channel List (Hidden Before Login) -->
-        <h2 id="channelTitle" style="display: none;">📡 Channels</h2>
-        <div class="channel-container" id="channelList" style="display: none;"></div>
+        <!-- AI-Based Recommendations -->
+        <h2>🔍 Recommended for You</h2>
+        <div id="recommendedList"></div>
+
+        <!-- Search Bar -->
+        <input type="text" id="searchChannel" placeholder="Search Channels..." onkeyup="searchChannels()">
+
+        <!-- Channel List -->
+        <h2>📡 Channels</h2>
+        <div class="channel-container" id="channelList"></div>
+
+        <!-- Live Chat -->
+        <h2>💬 Live Chat</h2>
+        <div class="chat-box" id="chatBox"></div>
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+
     </div>
 
     <script src="script.js"></script>
