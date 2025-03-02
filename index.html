@@ -3,59 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live TV Streaming 5.0</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Live TV Streaming 6.0</title>
+    <link rel="stylesheet" href="premium.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>📺 Live TV Streaming 5.0</h1>
+        <h1>🔒 Login to Continue</h1>
 
-        <!-- User Login & Registration -->
-        <div class="auth-section" id="authSection">
-            <input type="text" id="username" placeholder="Enter Username">
-            <input type="password" id="password" placeholder="Enter Password">
+        <!-- Login Form -->
+        <div class="auth-section" id="loginSection">
+            <input type="text" id="loginUsername" placeholder="Enter Username">
+            <input type="password" id="loginPassword" placeholder="Enter Password">
             <button onclick="login()">Login</button>
-            <button onclick="register()">Register</button>
+            <p>Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
         </div>
 
-        <!-- User Profile & Logout -->
-        <div id="userSection" style="display: none;">
-            <p>Welcome, <span id="userDisplayName"></span>! (<span id="userSubscription"></span>)</p>
-            <button class="toggle-btn" id="logoutBtn" onclick="logout()">Logout</button>
+        <!-- Signup Form (Hidden Initially) -->
+        <div class="auth-section" id="signupSection" style="display: none;">
+            <input type="text" id="signupUsername" placeholder="Choose a Username">
+            <input type="password" id="signupPassword" placeholder="Create a Password">
+            <button onclick="register()">Sign Up</button>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
         </div>
 
-        <!-- Live Notifications -->
-        <div id="notifications" class="notification-box"></div>
-
-        <!-- Dark Mode Toggle -->
-        <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
-
-        <!-- Live TV Player -->
-        <h2>🎥 Watch Live</h2>
-        <div id="videoContainer">
-            <video id="tvPlayer" controls autoplay>
-                <source id="videoSource" src="https://amartechbd.xyz/toffeebd/?play=match-2" type="video/mp4">
-            </video>
+        <!-- After Login - TV Channels Section -->
+        <div id="tvSection" style="display: none;">
+            <h2>📺 Live TV Channels</h2>
+            <div id="channelList"></div>
+            <button onclick="upgradeToPremium()">Upgrade to Premium</button>
         </div>
-
-        <!-- AI-Based Recommendations -->
-        <h2>🔍 Recommended for You</h2>
-        <div id="recommendedList"></div>
-
-        <!-- Search Bar -->
-        <input type="text" id="searchChannel" placeholder="Search Channels..." onkeyup="searchChannels()">
-
-        <!-- Channel List -->
-        <h2>📡 Channels</h2>
-        <div class="channel-container" id="channelList"></div>
-
-        <!-- Live Chat -->
-        <h2>💬 Live Chat</h2>
-        <div class="chat-box" id="chatBox"></div>
-        <input type="text" id="chatInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-
     </div>
 
     <script src="script.js"></script>
