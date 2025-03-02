@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live TV Streaming 3.2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>📺 Live TV Streaming</h1>
+
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <input type="text" id="username" placeholder="Enter Username">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button onclick="login()">Login</button>
+        </div>
+
+        <!-- Logout Button -->
+        <button class="toggle-btn" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+
+        <!-- Dark Mode Toggle -->
+        <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+        <!-- Live TV Player -->
+        <h2>🎥 Watch Live</h2>
+        <video id="tvPlayer" controls autoplay>
+            <source id="videoSource" src="https://amartechbd.xyz/toffeebd/?play=match-2" type="video/mp4">
+        </video>
+
+        <!-- Channel List (Hidden Before Login) -->
+        <h2 id="channelTitle" style="display: none;">📡 Channels</h2>
+        <div class="channel-container" id="channelList" style="display: none;"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
