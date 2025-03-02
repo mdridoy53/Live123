@@ -1,26 +1,36 @@
-// Show Signup Form
-function showSignup() {
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("signupSection").style.display = "block";
+const promoCodes = JSON.parse(localStorage.getItem("promoCodes")) || {};
+const onlineUsers = JSON.parse(localStorage.getItem("onlineUsers")) || {};
+
+// Generate Unique Referral Code
+function generateReferralCode(username) {
+    return username + Math.random().toString(36).substr(2, 6).toUpperCase();
 }
 
-// Show Login Form
-function showLogin() {
-    document.getElementById("signupSection").style.display = "none";
-    document.getElementById("loginSection").style.display = "block";
+// Generate a Random 12-Character Promo Code
+function generatePromoCode(days) {
+    let code = Math.random().toString(36).substr(2, 12).toUpperCase();
+    promoCodes[code] = { days, used: 0, limit: 1 }; // 1-time use
+    localStorage.setItem("promoCodes", JSON.stringify(promoCodes));
+    updatePromoList();
+    alert(`Generated Promo Code: ${code} for ${days} days.`);
 }
 
-// Generate a Random 12-Digit User ID
-function generateUserId() {
-    return Math.floor(100000000000 + Math.random() * 900000000000).toString();
+// Update Promo Code List
+function updatePromoList() {
+    let promoList = Object.entries(promoCodes)
+        .map(([code, details]) => `${code} - ${details.days} Days (Used: ${details.used}/${details.limit})`)
+        .join("\n");
+    document.getElementById("promoList").innerText = promoList || "No active promo codes.";
 }
 
 // Register a New User
 function register() {
     let username = document.getElementById("signupUsername").value;
     let password = document.getElementById("signupPassword").value;
-    let userId = generateUserId();
-    let isPremium = false;
+    let promoCode = document.getElementById("promoCode").value.trim().toUpperCase();
+    let referralCode = generateReferralCode(username);
+    let subscription = "Free";
+    let expiry = "N/A";
 
     if (username === "" || password === "") {
         alert("Please fill all fields.");
@@ -28,94 +38,76 @@ function register() {
     }
 
     if (localStorage.getItem(username)) {
-        alert("Username already exists! Choose a different one.");
+        alert("Username already exists!");
         return;
     }
 
-    let userData = { username, password, userId, isPremium };
+    // Check Promo Code Validity
+    if (promoCodes[promoCode] && promoCodes[promoCode].used < promoCodes[promoCode].limit) {
+        subscription = "Premium";
+        expiry = getExpiryDate(promoCodes[promoCode].days);
+        promoCodes[promoCode].used++;
+        localStorage.setItem("promoCodes", JSON.stringify(promoCodes));
+        updatePromoList();
+        alert(`Promo Code Applied! You have ${promoCodes[promoCode].days} days of Premium access.`);
+    }
+
+    let userData = { username, password, referralCode, subscription, expiry };
     localStorage.setItem(username, JSON.stringify(userData));
 
-    // Simulate saving to data.txt (for real-world use, this should be backend-controlled)
-    saveToFile(`User: ${username}, ID: ${userId}, Premium: ${isPremium}`);
-
-    alert(`Signup successful! Your User ID: ${userId}`);
+    alert(`Signup successful! Your Referral Code: ${referralCode}`);
     showLogin();
 }
 
-// Simulate saving to data.txt (Only works in backend)
-function saveToFile(data) {
-    console.log("Saving to data.txt:", data);
-}
-
-// Login an Existing User
+// Login User
 function login() {
     let username = document.getElementById("loginUsername").value;
     let password = document.getElementById("loginPassword").value;
+
+    // Admin Login
+    if (username === "sabbir" && password === "sabbir") {
+        alert("Admin Login Successful!");
+        localStorage.setItem("loggedInUser", username);
+        showAdminPanel();
+        return;
+    }
+
     let userData = JSON.parse(localStorage.getItem(username));
 
     if (userData && userData.password === password) {
         alert("Login successful!");
         localStorage.setItem("loggedInUser", username);
-        showTVSection(userData);
+        onlineUsers[username] = new Date().toISOString();
+        localStorage.setItem("onlineUsers", JSON.stringify(onlineUsers));
+        showDashboard(userData);
     } else {
-        alert("Invalid credentials. Try again.");
+        alert("Invalid credentials.");
     }
 }
 
-// Show TV Channels After Login
-function showTVSection(userData) {
-    document.getElementById("loginSection").style.display = "none";
+// Show Dashboard After Login
+function showDashboard(userData) {
+    document.getElementById("authSection").style.display = "none";
     document.getElementById("signupSection").style.display = "none";
-    document.getElementById("tvSection").style.display = "block";
+    document.getElementById("dashboardSection").style.display = "block";
 
-    let channels = [
-        { name: "Sky Sports", url: "http://20.255.58.170/cric/test.php?id=skysme&e.m3u8", premium: false },
-        { name: "ESPN", url: "https://c3s9.vfruitfairy.com/com5/tracks-v1a1/mono.m3u8", premium: false },
-        { name: "HBO Max", url: "https://hbo-premium-stream.com/live.m3u8", premium: true },
-        { name: "Netflix Live", url: "https://netflix-premium.com/stream.m3u8", premium: true }
-    ];
-
-    let channelList = document.getElementById("channelList");
-    channelList.innerHTML = "";
-
-    channels.forEach(channel => {
-        let channelItem = document.createElement("div");
-        channelItem.innerHTML = `<p>${channel.name}</p>`;
-
-        if (channel.premium && !userData.isPremium) {
-            channelItem.innerHTML += "<p>🔒 Premium Only</p>";
-        } else {
-            channelItem.innerHTML += `<button onclick="playChannel('${channel.url}')">Play</button>`;
-        }
-
-        channelList.appendChild(channelItem);
-    });
+    document.getElementById("userDisplayName").innerText = userData.username;
+    document.getElementById("userSubscription").innerText = userData.subscription;
+    document.getElementById("userExpiry").innerText = userData.expiry;
+    document.getElementById("referralCode").innerText = userData.referralCode;
 }
 
-// Play Selected Channel
-function playChannel(url) {
-    alert(`Streaming: ${url}`);
-}
-
-// Upgrade to Premium
-function upgradeToPremium() {
+// Logout User
+function logout() {
     let username = localStorage.getItem("loggedInUser");
-    let userData = JSON.parse(localStorage.getItem(username));
-
-    if (!userData) return;
-
-    userData.isPremium = true;
-    localStorage.setItem(username, JSON.stringify(userData));
-
-    alert("You are now a Premium User!");
-    showTVSection(userData);
+    delete onlineUsers[username];
+    localStorage.setItem("onlineUsers", JSON.stringify(onlineUsers));
+    localStorage.removeItem("loggedInUser");
+    location.reload();
 }
 
 // Initialize
 window.onload = function () {
     let username = localStorage.getItem("loggedInUser");
-    if (username) {
-        let userData = JSON.parse(localStorage.getItem(username));
-        showTVSection(userData);
-    }
+    if (username === "sabbir") showAdminPanel();
 };
